@@ -1,13 +1,6 @@
 import pool from '../config/db.js';
-
-// In-memory graph singleton
 let graphCache = null;
 
-/**
- * Node key format: "stopId:routeId"
- * Same physical stop on multiple lines = separate nodes
- * Transfer edges connect same stop across different lines
- */
 export async function buildGraph() {
   const result = await pool.query(`
     SELECT
@@ -57,7 +50,6 @@ export async function buildGraph() {
   }
 
   for (const stops of Object.values(byRoute)) {
-    // already ordered by stop_order from query
     for (let i = 0; i < stops.length - 1; i++) {
       const fromKey  = `${stops[i].stop_id}:${stops[i].route_id}`;
       const toKey    = `${stops[i + 1].stop_id}:${stops[i + 1].route_id}`;
@@ -68,7 +60,6 @@ export async function buildGraph() {
     }
   }
 
-  // Step 3: Add transfer edges at interchange stations (same stop, different routes)
   for (const [stopId, routeIds] of stopRouteMap.entries()) {
     if (routeIds.length > 1) {
       for (let i = 0; i < routeIds.length; i++) {

@@ -2,7 +2,7 @@ import { getGraph } from './GraphBuilder.js';
 
 const TRANSFER_PENALTY = parseInt(process.env.TRANSFER_PENALTY_MINUTES) || 10;
 
-// Simple Min Priority Queue (no external lib needed)
+// Simple Min Priority Queue
 class MinPriorityQueue {
   constructor() { this.heap = []; }
   enqueue(element, priority) {
@@ -13,12 +13,16 @@ class MinPriorityQueue {
   isEmpty() { return this.heap.length === 0; }
 }
 
+
+
 /**
  * @param {string} sourceStopId
  * @param {string} destStopId
  * @param {string} strategy - 'fastest' | 'least_transfers'
  * @returns {object|null} { segments, totalTime, totalStops, transfers } or null if no path
  */
+
+
 export function findPath(sourceStopId, destStopId, strategy = 'fastest') {
   const graph = getGraph();
   if (!graph) throw new Error('Graph not initialized');
@@ -80,7 +84,6 @@ export function findPath(sourceStopId, destStopId, strategy = 'fastest') {
  * Traces back the prev map and formats into readable segments
  */
 function buildResult(prev, endNode, nodeMetaMap, totalCost) {
-  // Trace back the full path
   const rawPath = [];
   let current = endNode;
   while (current !== undefined) {
