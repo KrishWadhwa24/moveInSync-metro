@@ -58,10 +58,14 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res, next) => {
   }
 });
 
+
+
 /**
  * GET /api/routes/search?from=stopId&to=stopId&strategy=fastest
  * strategy: 'fastest' (default) | 'least_transfers'
  */
+
+
 router.get('/search', async (req, res, next) => {
   try {
     const { from, to, strategy = 'fastest' } = req.query;
@@ -115,6 +119,29 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
+// GET /api/routes/map — returns all routes with ordered stops for map rendering
+router.get('/map', async (req, res, next) => {
+  try {
+    const routesResult = await pool.query('SELECT * FROM routes ORDER BY name ASC');
+    const routes = await Promise.all(
+      routesResult.rows.map(async (route) => {
+        const stopsResult = await pool.query(
+          `SELECT s.id, s.name, s.code, rs.stop_order
+           FROM route_stops rs
+           JOIN stops s ON s.id = rs.stop_id
+           WHERE rs.route_id = $1
+           ORDER BY rs.stop_order ASC`,
+          [route.id]
+        );
+        return { ...route, stops: stopsResult.rows };
+      })
+    );
+    res.json({ success: true, routes });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/routes  (list all routes with their stops)
 router.get('/', async (req, res, next) => {
   try {
@@ -139,5 +166,8 @@ router.get('/', async (req, res, next) => {
     next(err);
   }
 });
+
+
+
 
 export default router;
