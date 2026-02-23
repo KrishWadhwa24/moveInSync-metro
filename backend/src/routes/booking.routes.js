@@ -7,10 +7,13 @@ import { findPath } from '../graph/Dijkstra.js';
 
 const router = express.Router();
 
+
 /**
  * Generates a unique tamper-resistant QR string
  * Format: base64url(bookingId|sourceCode|destCode|timestamp).hmacSignature
  */
+
+
 function generateQRString(bookingId, sourceCode, destCode) {
   const timestamp = Date.now();
   const payload   = `${bookingId}|${sourceCode}|${destCode}|${timestamp}`;
@@ -24,11 +27,14 @@ function generateQRString(bookingId, sourceCode, destCode) {
   return `${encoded}.${signature}`;
 }
 
+
 /**
  * POST /api/bookings
  * Body: { source_stop_id, destination_stop_id, strategy? }
  * Header: Authorization: Bearer <token>
  */
+
+
 router.post('/', authMiddleware, async (req, res, next) => {
   try {
     const { source_stop_id, destination_stop_id, strategy = 'fastest' } = req.body;
