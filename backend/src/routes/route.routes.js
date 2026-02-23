@@ -19,6 +19,8 @@ const router = express.Router();
  *   ]
  * }
  */
+
+
 router.post('/', authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const { name, color, stops } = req.body;
