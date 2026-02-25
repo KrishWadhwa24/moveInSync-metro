@@ -39,13 +39,12 @@ const PORT = process.env.PORT || 5000;
 
 async function start() {
   try {
-    // Test DB connection
+    // Testing DB connection
     await pool.query('SELECT 1');
-    console.log('✅ Database connected');
+    console.log('Database connected successfully');
 
-    // Build in-memory graph on startup
     await buildGraph();
-    console.log('✅ Graph built and cached');
+    console.log('Graph built and cached');
 
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   } catch (err) {

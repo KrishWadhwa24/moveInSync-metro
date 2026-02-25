@@ -83,8 +83,7 @@ router.get('/search', async (req, res, next) => {
     if (from === to) {
       return res.status(400).json({ success: false, message: 'Source and destination cannot be the same' });
     }
-
-    // Validate stops exist
+    
     const [sourceResult, destResult] = await Promise.all([
       pool.query('SELECT id, name, code FROM stops WHERE id = $1', [from]),
       pool.query('SELECT id, name, code FROM stops WHERE id = $1', [to]),

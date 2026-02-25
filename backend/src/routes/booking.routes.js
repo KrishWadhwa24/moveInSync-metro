@@ -66,7 +66,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
     const source      = sourceResult.rows[0];
     const destination = destResult.rows[0];
 
-    // Idempotency check — prevent duplicate bookings for same user/route within 5 min window
+    // Idempotency check
     const idempotencyKey = `${req.user.id}:${source_stop_id}:${destination_stop_id}:${Math.floor(Date.now() / 300000)}`;
     const existing = await pool.query(
       'SELECT * FROM bookings WHERE idempotency_key = $1',
