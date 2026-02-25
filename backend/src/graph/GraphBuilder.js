@@ -24,7 +24,6 @@ export async function buildGraph() {
   const stopRouteMap  = new Map(); // stopId → [routeIds]
   const nodeMetaMap   = new Map(); // "stopId:routeId" → { stopId, stopName, stopCode, routeId, routeName, routeColor }
 
-  // Step 1: Register all nodes
   for (const row of rows) {
     const key = `${row.stop_id}:${row.route_id}`;
     if (!adjacencyList.has(key)) adjacencyList.set(key, []);
@@ -53,7 +52,7 @@ export async function buildGraph() {
     for (let i = 0; i < stops.length - 1; i++) {
       const fromKey  = `${stops[i].stop_id}:${stops[i].route_id}`;
       const toKey    = `${stops[i + 1].stop_id}:${stops[i + 1].route_id}`;
-      const time     = stops[i].travel_time_to_next || 2; // fallback 2 min
+      const time     = stops[i].travel_time_to_next || 2;
 
       adjacencyList.get(fromKey).push({ node: toKey,    travelTime: time, isTransfer: false, routeId: stops[i].route_id });
       adjacencyList.get(toKey).push({   node: fromKey,  travelTime: time, isTransfer: false, routeId: stops[i].route_id });
@@ -74,7 +73,7 @@ export async function buildGraph() {
   }
 
   graphCache = { adjacencyList, stopRouteMap, nodeMetaMap };
-  console.log(`✅ Graph built: ${adjacencyList.size} nodes, ${stopRouteMap.size} unique stops`);
+  console.log(`Graph built: ${adjacencyList.size} nodes, ${stopRouteMap.size} unique stops`);
   return graphCache;
 }
 
@@ -82,7 +81,6 @@ export function getGraph() {
   return graphCache;
 }
 
-// Call this after any admin adds/updates stops or routes
 export async function rebuildGraph() {
   graphCache = null;
   return await buildGraph();
